@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -15,18 +16,11 @@ import java.util.Set;
 @Builder
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ✅ Ensures AUTO_INCREMENT
-    @Column(name = "user_id", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", unique = true, nullable = false)
     private String username;
-
-    @Column(name = "password", nullable = false)
-    private String password;
-
-    @Column(name = "tenant_id") // ✅ This should match the column name in the database
-    private Long tenant_id;
+    private String password; // hashed password
 
     @ManyToMany(fetch = FetchType.EAGER) // Eagerly load roles
     @JoinTable(
@@ -35,6 +29,13 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    // Additional individual permissions outside the role
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_permissions",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private Set<Permission> permissions;
 
 
 }

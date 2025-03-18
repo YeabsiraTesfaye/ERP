@@ -15,29 +15,28 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/branch")
 class BranchController {
 
-    private final BranchService BranchService;
+    private final BranchService branchService;
 
-    BranchController(BranchService BranchService) {
-        this.BranchService = BranchService;
+    BranchController(BranchService branchService) {
+        this.branchService = branchService;
     }
     @PostMapping
     public Branch createBranch(@RequestHeader("X-Company-Schema") String companyName, @RequestBody Branch Branch) {
-
-        return BranchService.registerBranch(Branch);
+        return branchService.registerBranch(Branch);
     }
 
     @GetMapping
-    public List<Branch> getAllBranchs(@RequestHeader("X-Company-Schema") String companyName) {
-        return BranchService.getAllBranches();
+    public List<Branch> getAllBranchs() {
+        return branchService.getAllBranches();
     }
 
     @GetMapping("/{id}")
     public Optional<Branch> getBranchById(@PathVariable Long id) {
-        return BranchService.getBranchById(id);
+        return branchService.getBranchById(id);
     }
 
     @PutMapping("/{id}")
     public Branch updateBranch(@PathVariable Long id, @RequestBody Branch Branch) {
-        return BranchService.updateBranch(id, Branch);
+        return branchService.updateBranch(id, Branch);
     }
 }

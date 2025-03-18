@@ -44,7 +44,6 @@ public class AuthController {
         UserEntity user = new UserEntity();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setTenant_id(request.getTenant_id());
         userRepository.save(user);
         return ResponseEntity.ok("User registered successfully.");
     }
@@ -52,27 +51,21 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         Optional<UserEntity> userOpt = userRepository.findByUsername(request.getUsername());
-
         if (userOpt.isEmpty() || !passwordEncoder.matches(request.getPassword(), userOpt.get().getPassword())) {
             return ResponseEntity.status(401).body("Invalid email or password.");
         }
-
         UserEntity user = userOpt.get();
         String token = jwtUtil.generateToken(user.getUsername());
 
-        // Map User entity to UserDTO using UserMapper
         UserDTO userDTO = UserMapper.getUserByUsername(request.getUsername(), userRepository);
 
         Set<Role> roles = userService.getUserRoles(request.getUsername());
         userDTO.setRoles(roles);
 
-
-        // Create response with token and user details
         LoginResponse response = new LoginResponse(
                 token,
-                userDTO // Pass the whole UserDTO here
+                userDTO
         );
-
         return ResponseEntity.ok(response);
     }
 }

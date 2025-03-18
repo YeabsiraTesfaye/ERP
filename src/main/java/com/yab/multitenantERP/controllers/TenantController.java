@@ -5,6 +5,7 @@ import com.yab.multitenantERP.entity.UserEntity;
 import com.yab.multitenantERP.services.SchemaInitializer;
 import com.yab.multitenantERP.services.TenantService;
 import com.yab.multitenantERP.services.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,12 +19,15 @@ public class TenantController {
         this.schemaInitializer = schemaInitializer;
     }
     @PostMapping
+    @PreAuthorize("hasPermission('tenant', 'POST')")
     public String createUser(@RequestHeader("X-Company-Schema") String companySchema,
                              @RequestBody Tenant tenant) {
         schemaInitializer.createSchema(tenant.getName());
         return "Tenant created: ";
     }
+
     @GetMapping("/getTenants")
+//    @PreAuthorize("hasPermission('tenant/getTenant', 'GET')")
     public List<Tenant> getTenants(){
         return schemaInitializer.tenants();
     }

@@ -75,6 +75,7 @@ public class SchemaInitializer {
                 .addAnnotatedClass(Shift.class)
                 .addAnnotatedClass(ShiftAssignment.class)
                 .addAnnotatedClass(Employee.class)
+                .addAnnotatedClass(ApiEntity.class)
                 .buildMetadata();
 
         Map<String, Object> optionsMap = new HashMap<>();

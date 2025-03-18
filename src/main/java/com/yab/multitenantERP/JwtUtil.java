@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.security.Key;
 import java.util.Date;
 
 @Component
@@ -50,5 +51,15 @@ public class JwtUtil {
         } catch (JwtException | IllegalArgumentException e) {
             return false; // Invalid token
         }
+    }
+
+    public Claims validate_token(String token) throws JwtException {
+        Key key = Keys.hmacShaKeyFor(secret.getBytes());
+        // Parses and validates the token. Throws an exception if invalid.
+        return Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
