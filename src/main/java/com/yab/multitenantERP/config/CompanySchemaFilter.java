@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -26,11 +27,21 @@ public class CompanySchemaFilter extends OncePerRequestFilter {
     public CompanySchemaFilter(TenantRepository tenantRepository) {
         this.tenantRepository = tenantRepository;
     }
-
+    private static final List<String> PERMITTED_PATHS = List.of(
+            "/tenant/getTenants"
+    );
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String path = request.getRequestURI();
+
+        if (PERMITTED_PATHS.stream().anyMatch(path::startsWith)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String companySchema = request.getHeader("X-Company-Schema");
+
 
         if (companySchema == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Tenant schema header (X-Company-Schema) is required.");

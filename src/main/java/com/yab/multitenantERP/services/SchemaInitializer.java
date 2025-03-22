@@ -28,6 +28,7 @@ public class SchemaInitializer {
     }
 
     public void createSchema(String schemaName) {
+        createTablesInSchema(schemaName);
         String sql = "CREATE SCHEMA " + schemaName;
         try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/erp", "postgres", "root");
              Statement statement = connection.createStatement()) {
@@ -37,7 +38,6 @@ public class SchemaInitializer {
             t.setName(schemaName);
             tenantRepository.save(t);
 
-            createTablesInSchema(schemaName);
         } catch (SQLException e) {
             throw new RuntimeException("Error creating schema: " + schemaName, e);
         }

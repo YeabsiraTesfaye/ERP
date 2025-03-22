@@ -1,6 +1,7 @@
 package com.yab.multitenantERP.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yab.multitenantERP.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,17 +26,19 @@ public class Branch {
     @Column(name = "branch_name", nullable = false)
     private String name;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDate endDate;
 
     @Column(name = "status", nullable = false)
-    private Boolean status;
+    private Status status;
 
     @JsonIgnore
-    @OneToMany
-    @JoinColumn(name = "employee_id", nullable = false)
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
     private List<Employee> employees;
 }

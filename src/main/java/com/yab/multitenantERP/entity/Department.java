@@ -1,10 +1,11 @@
 package com.yab.multitenantERP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-
+import java.util.List;
 
 @Entity
 @Table(name = "departments")
@@ -23,10 +24,14 @@ public class Department {
     @Column(name = "department_name", nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id", nullable = false)
-    private Employee employee;
+    @Column(name = "required_manpower")
+    private Integer requiredManPower;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    private List<Employee> employees;
+
+    @Builder.Default
     @Column(name = "effective_date", nullable = false)
-    private LocalDate effectiveDate;
+    private LocalDate effectiveDate = LocalDate.now();
 }

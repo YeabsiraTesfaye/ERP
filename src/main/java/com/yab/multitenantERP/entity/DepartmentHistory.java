@@ -1,5 +1,6 @@
 package com.yab.multitenantERP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class DepartmentHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "employee_id")
     private Employee employee;
@@ -26,4 +28,7 @@ public class DepartmentHistory {
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
+
+    private LocalDate effectiveDate;
+
 }

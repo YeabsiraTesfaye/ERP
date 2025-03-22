@@ -39,7 +39,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     // Define paths that should be excluded from authorization checks
     private static final List<String> PERMITTED_PATHS = List.of(
-            "/auth/", "/tenant/getTenants"
+            "/tenant/getTenants", "/auth/"
     );
 
     @Override
@@ -49,20 +49,21 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        // Bypass authorization for permitted paths
         if (PERMITTED_PATHS.stream().anyMatch(path::startsWith)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Check if the API endpoint exists in the database
-        Optional<ApiEntity> apiOpt = apiRepository.findByPathAndMethod(path, method);
+        System.out.println(path);
+        String normalizedPath = path.replaceAll("/\\d+", "/{id}");
+        System.out.println(normalizedPath);
+
+        Optional<ApiEntity> apiOpt = apiRepository.findByPathAndMethod(normalizedPath, method);
         if (apiOpt.isEmpty()) {
             sendJsonResponse(response, HttpServletResponse.SC_FORBIDDEN, "Endpoint not registered");
             return;
         }
 
-        // Extract Authorization header
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             sendJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Missing or invalid Authorization header");
@@ -72,7 +73,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
         String username;
         try {
-            // Validate token and extract claims
             Claims claims = jwtUtil.validate_token(token);
             username = claims.getSubject();
         } catch (JwtException e) {
@@ -88,14 +88,14 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
         UserEntity user = userOpt.get();
 
-        // Check user permissions
-        if (!authorizationService.hasAccess(user, path, method)) {
+        if (!authorizationService.hasAccess(user, normalizedPath, method)) {
             sendJsonResponse(response, HttpServletResponse.SC_FORBIDDEN, "Access denied");
             return;
         }
 
         filterChain.doFilter(request, response);
     }
+
     private void sendJsonResponse(HttpServletResponse response, int status, String message) throws IOException {
         response.setStatus(status);
         response.setContentType("application/json");
