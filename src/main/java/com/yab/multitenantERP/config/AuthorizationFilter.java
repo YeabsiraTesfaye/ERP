@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,7 +56,15 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         }
 
         System.out.println(path);
-        String normalizedPath = path.replaceAll("/\\d+", "/{id}");
+        String normalizedPath = "";
+        if(path.contains("/files/view/")){
+
+            String fileName = Paths.get(path).getFileName().toString();
+            normalizedPath = path.replaceAll(fileName, "{id}");
+        }else{
+            normalizedPath = path.replaceAll("/\\d+", "/{id}");
+        }
+
         System.out.println(normalizedPath);
 
         Optional<ApiEntity> apiOpt = apiRepository.findByPathAndMethod(normalizedPath, method);

@@ -31,7 +31,12 @@ public class Department {
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
     private List<Employee> employees;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Position> positions;
+
     @Builder.Default
     @Column(name = "effective_date", nullable = false)
     private LocalDate effectiveDate = LocalDate.now();
+
 }

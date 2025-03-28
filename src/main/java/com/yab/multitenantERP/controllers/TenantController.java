@@ -19,7 +19,6 @@ public class TenantController {
         this.schemaInitializer = schemaInitializer;
     }
     @PostMapping
-    @PreAuthorize("hasPermission('tenant', 'POST')")
     public String createUser(@RequestHeader("X-Company-Schema") String companySchema,
                              @RequestBody Tenant tenant) {
         schemaInitializer.createSchema(tenant.getName());
@@ -27,7 +26,6 @@ public class TenantController {
     }
 
     @GetMapping("/getTenants")
-//    @PreAuthorize("hasPermission('tenant/getTenant', 'GET')")
     public List<Tenant> getTenants(){
         return schemaInitializer.tenants();
     }

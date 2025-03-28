@@ -77,6 +77,7 @@ public class EmployeeService {
             newEmployee.setBranch(branch);
             newEmployee.setDateOfHire(employee.getDateOfHire());
             newEmployee.setStatus(employee.getStatus());
+            newEmployee.setPhoto(employee.getPhoto());
 
             PositionHistory ph = new PositionHistory();
             ph.setEmployee(newEmployee);

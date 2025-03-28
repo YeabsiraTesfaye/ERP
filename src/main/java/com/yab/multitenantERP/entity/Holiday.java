@@ -1,32 +1,35 @@
 package com.yab.multitenantERP.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "holidays")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 public class Holiday {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate date;
+    @Column(nullable = false)
+    private String name;
+
     private String description;
 
-    public Holiday(LocalDate date, String description) {
-        this.date = date;
-        this.description = description;
-    }
+    @Column(nullable = false)
+    private int month;
+
+    @Column(nullable = false)
+    private int day;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "year_id", nullable = false)
+    private Year year;
 }

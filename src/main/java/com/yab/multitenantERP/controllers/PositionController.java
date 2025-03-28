@@ -1,11 +1,11 @@
 package com.yab.multitenantERP.controllers;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.yab.multitenantERP.entity.Position;
 import com.yab.multitenantERP.services.PositionService;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/position")
@@ -23,7 +23,13 @@ class PositionController {
 
     @GetMapping
     public List<Position> getAllPositions() {
-        return positionService.getAllPositiones();
+        return positionService.getAllPositions();
+    }
+
+
+    @GetMapping("/getPositionByDepartmentId/{id}")
+    public List<Position> getPositionsByDepartment(@PathVariable Long id) {
+        return positionService.getPositionsByDepartment(id);
     }
 
     @GetMapping("/{id}")
@@ -35,4 +41,5 @@ class PositionController {
     public Position updatePosition(@PathVariable Long id, @RequestBody Position position) {
         return positionService.updatePosition(id, position);
     }
+
 }

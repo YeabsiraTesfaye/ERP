@@ -25,4 +25,5 @@ public class EmployeeDTO {
     private Long positionId;
     private LocalDate dateOfHire;
     private Status status;
+    private String photo;
 }

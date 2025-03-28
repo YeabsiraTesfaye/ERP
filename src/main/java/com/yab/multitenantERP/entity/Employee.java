@@ -40,6 +40,8 @@ public class Employee {
 
   private String nationalId;
 
+  private Status maritalStatus;
+
   @NonNull
   private String tinNumber;
 

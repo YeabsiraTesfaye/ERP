@@ -55,11 +55,13 @@ public class SchemaInitializer {
         Metadata metadata = new MetadataSources(registry)
                 .addAnnotatedClass(Address.class)
                 .addAnnotatedClass(AddressHistory.class)
+                .addAnnotatedClass(ApiEntity.class)
                 .addAnnotatedClass(Attendance.class)
                 .addAnnotatedClass(Branch.class)
                 .addAnnotatedClass(CompanyWorkSchedule.class)
                 .addAnnotatedClass(Department.class)
                 .addAnnotatedClass(DepartmentHistory.class)
+                .addAnnotatedClass(Document.class)
                 .addAnnotatedClass(EmergencyContactHistory.class)
                 .addAnnotatedClass(EmployeeWorkSchedule.class)
                 .addAnnotatedClass(EmploymentTypeHistory.class)
@@ -76,6 +78,7 @@ public class SchemaInitializer {
                 .addAnnotatedClass(ShiftAssignment.class)
                 .addAnnotatedClass(Employee.class)
                 .addAnnotatedClass(ApiEntity.class)
+                .addAnnotatedClass(WorkingDay.class)
                 .buildMetadata();
 
         Map<String, Object> optionsMap = new HashMap<>();

@@ -31,7 +31,9 @@ public class Position {
     @JsonIgnore
     @OneToMany(mappedBy = "position", cascade = CascadeType.ALL)
     private List<Employee> employees;
-
-    @Column(name = "effective_date")
-    private LocalDate effectiveDate;
+    
+    @ManyToOne
+    @NonNull
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
 }
