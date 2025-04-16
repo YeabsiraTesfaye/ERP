@@ -1,5 +1,6 @@
 package com.yab.multitenantERP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,13 @@ public class SalaryHistory {
     private Employee employee;
 
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "position_id")
+    private Position position;
+
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "salary_id")
     private Salary salary;

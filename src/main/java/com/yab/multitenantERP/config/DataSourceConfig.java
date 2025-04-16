@@ -44,8 +44,6 @@ public class DataSourceConfig {
 
         // Schema-specific DataSources
         Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put("company1", createDataSourceForSchema("company1"));
-        targetDataSources.put("company2", createDataSourceForSchema("company2"));
 
         routingDataSource.setTargetDataSources(targetDataSources);
         routingDataSource.setDefaultTargetDataSource(defaultDataSource);

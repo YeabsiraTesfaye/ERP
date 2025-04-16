@@ -1,32 +1,38 @@
 package com.yab.multitenantERP.entity;
 
+import com.yab.multitenantERP.enums.AttendanceSession;
+import com.yab.multitenantERP.enums.AttendanceStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import lombok.*;
 
 @Entity
+@Table(name = "attendances")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "employee_id")
+    @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
-    private LocalDate date;
-    private LocalTime checkInTime;
-    private LocalTime checkOutTime;
-    
-    private boolean isLate;
-    private boolean isEarlyDeparture;
-    private Duration overtime;
+    private int year;
+    private int month;
+    private int day;
+    private int hour;
+    private int minute;
+    private int second;
+    private String dayName;
 
-    // Getters and Setters
+    @Enumerated(EnumType.STRING)
+    private AttendanceStatus status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AttendanceSession session;
+
 }

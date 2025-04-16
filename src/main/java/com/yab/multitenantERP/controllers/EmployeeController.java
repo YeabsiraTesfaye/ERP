@@ -1,9 +1,7 @@
 package com.yab.multitenantERP.controllers;
 
-import java.util.List;
-import java.util.Optional;
-
-import com.yab.multitenantERP.dtos.EmployeeDTO;
+import com.yab.multitenantERP.dtos.EmployeeFetchDTO;
+import com.yab.multitenantERP.dtos.PositionFetchDTO;
 import com.yab.multitenantERP.entity.Employee;
 import com.yab.multitenantERP.services.EmployeeService;
 import org.springframework.data.domain.Page;
@@ -19,7 +17,7 @@ class EmployeeController {
         this.employeeService = employeeService;
     }
     @PostMapping
-    public Employee createEmployee(@RequestBody EmployeeDTO employee) {
+    public Employee createEmployee(@RequestBody Employee employee) {
         return employeeService.registerUser(employee);
     }
 
@@ -29,7 +27,7 @@ class EmployeeController {
 //    }
 
     @GetMapping("/{id}")
-    public Optional<Employee> getEmployeeById(@PathVariable Long id) {
+    public EmployeeFetchDTO getEmployeeById(@PathVariable Long id) {
         return employeeService.getEmployeeById(id);
     }
 
@@ -39,7 +37,7 @@ class EmployeeController {
     }
 
     @GetMapping
-    public Page<Employee> getEmployees(
+    public Page<EmployeeFetchDTO> getEmployees(
             @RequestParam(value = "firstName", required = false, defaultValue = "") String firstName,
             @RequestParam(value = "middleName", required = false, defaultValue = "") String middleName,
             @RequestParam(value = "lastName", required = false, defaultValue = "") String lastName,

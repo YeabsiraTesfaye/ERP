@@ -13,6 +13,7 @@ public enum Status {
     PART_TIME,
     CONTRACTUAL,
     TEMPORARY,
+    PERMANENT,
     FREELANCE,
     INTERNSHIP,
     PROBATIONARY,
@@ -26,7 +27,6 @@ public enum Status {
     VOLUNTEER,
     SABBATICAL,
     JOB_SHARING,
-    MATERNITY_PATERNITY_LEAVE,
     SINGLE,
     MARRIED,
     DIVORCED,
@@ -35,6 +35,9 @@ public enum Status {
     ENGAGED,
     DOMESTIC_PARTNERSHIP,
     COHABITING,
-    ANNULLED;
+    ANNULLED,
+    VACATION_LEAVE,
+    MATERNITY_LEAVE,
+    PATERNITY_LEAVE,
 
 }

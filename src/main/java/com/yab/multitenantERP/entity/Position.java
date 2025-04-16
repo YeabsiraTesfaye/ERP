@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.List;
-
 
 @Entity
 @Table(name = "positions")
@@ -15,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Position {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +26,29 @@ public class Position {
     private Integer requiredManPower;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "position", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Employee> employees;
-    
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @NonNull
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "position_benefit",
+            joinColumns = @JoinColumn(name = "position_id"),
+            inverseJoinColumns = @JoinColumn(name = "benefit_id"))
+    private List<Benefit> benefits;
+
+
+
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(name = "position_allowance",
+//            joinColumns = @JoinColumn(name = "position_id"),
+//            inverseJoinColumns = @JoinColumn(name = "allowance_id"))
+//    private List<Allowance> allowances;
+
+
+    @OneToOne(mappedBy = "position", cascade = CascadeType.ALL)
+    private Salary salary;
 }

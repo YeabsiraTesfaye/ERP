@@ -1,10 +1,12 @@
 package com.yab.multitenantERP.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
+import com.yab.multitenantERP.dtos.PositionFetchDTO;
 import com.yab.multitenantERP.entity.Position;
 import com.yab.multitenantERP.services.PositionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 class PositionController {
 
     private final PositionService positionService;
+    private static final Logger logger = LoggerFactory.getLogger(PositionController.class);
 
     PositionController(PositionService positionService) {
         this.positionService = positionService;
@@ -33,8 +36,8 @@ class PositionController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Position> getPositionById(@PathVariable Long id) {
-        return positionService.getPositionById(id);
+    public PositionFetchDTO getPositionById(@PathVariable Long id) {
+        return positionService.fetchPositionAllowanceDTO(id);
     }
 
     @PutMapping("/{id}")

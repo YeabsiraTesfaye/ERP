@@ -39,6 +39,8 @@ public class Branch {
     private Status status;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Employee> employees;
+
+
 }

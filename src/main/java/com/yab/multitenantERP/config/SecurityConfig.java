@@ -24,13 +24,17 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final CustomUserDetailsService customUserDetailsService;
     private final AuthorizationFilter authorizationFilter;
+    private final CompanySchemaFilter companySchemaFilter;
+
 
     public SecurityConfig(JwtFilter jwtFilter,
                           CustomUserDetailsService customUserDetailsService,
+                          CompanySchemaFilter companySchemaFilter,
                           AuthorizationFilter authorizationFilter) {
         this.jwtFilter = jwtFilter;
         this.customUserDetailsService = customUserDetailsService;
         this.authorizationFilter = authorizationFilter;
+        this.companySchemaFilter = companySchemaFilter;
     }
 
     @Bean
@@ -60,10 +64,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/tenant/getTenants").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // Allow OPTIONS preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(companySchemaFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

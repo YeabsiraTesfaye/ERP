@@ -1,5 +1,6 @@
 package com.yab.multitenantERP.dtos;
 
+import com.yab.multitenantERP.entity.Address;
 import com.yab.multitenantERP.enums.Gender;
 import com.yab.multitenantERP.enums.Status;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,4 +28,5 @@ public class EmployeeDTO {
     private LocalDate dateOfHire;
     private Status status;
     private String photo;
+    private List<Address> addressHistory;
 }

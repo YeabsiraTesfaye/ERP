@@ -28,7 +28,7 @@ public class Department {
     private Integer requiredManPower;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "department", fetch = FetchType.LAZY)
     private List<Employee> employees;
 
     @JsonIgnore

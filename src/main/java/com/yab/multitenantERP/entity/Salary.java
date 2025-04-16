@@ -1,5 +1,6 @@
 package com.yab.multitenantERP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,8 +26,13 @@ public class Salary {
     @Column(name = "effective_date")
     private LocalDate effectiveDate;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)  // Set to LAZY
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)  // Set to LAZY
+    @JoinColumn(name = "position_id")
+    private Position position;
 }
