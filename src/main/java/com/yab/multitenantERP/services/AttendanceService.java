@@ -1,14 +1,10 @@
 package com.yab.multitenantERP.services;
 
-import com.yab.multitenantERP.dtos.AttendanceResponse;
-import com.yab.multitenantERP.dtos.EmployeeAttendanceDTO;
-import com.yab.multitenantERP.dtos.SingleAttendanceDTO;
-import com.yab.multitenantERP.entity.AllowedAttendanceSession;
-import com.yab.multitenantERP.entity.Attendance;
-import com.yab.multitenantERP.entity.AttendancePolicy;
-import com.yab.multitenantERP.entity.Employee;
+import com.yab.multitenantERP.dtos.*;
+import com.yab.multitenantERP.entity.*;
 import com.yab.multitenantERP.enums.AttendanceSession;
 import com.yab.multitenantERP.enums.AttendanceStatus;
+import com.yab.multitenantERP.enums.Status;
 import com.yab.multitenantERP.repositories.AllowedAttendanceSessionRepository;
 import com.yab.multitenantERP.repositories.AttendancePolicyRepository;
 import com.yab.multitenantERP.repositories.AttendanceRepository;
@@ -21,9 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.TextStyle;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,7 +69,7 @@ public class AttendanceService {
     }
 
 
-    public Attendance markAttendance(Long employeeId, AttendanceSession session, AttendanceStatus status) {
+    public Attendance markAttendance(Long employeeId, AttendanceSession session) {
         LocalDateTime now = LocalDateTime.now();
 
         int year = now.getYear();
@@ -91,19 +85,29 @@ public class AttendanceService {
             throw new RuntimeException("Attendance already filled for this session.");
         }
 
-        AttendanceStatus attendanceStatus = status;
-        Optional<AttendancePolicy> s = attendancePolicyRepository.findBySession(session);
-        if(s.isPresent()){
-            if(LocalTime.now().isAfter(s.get().getLateAfter())){
-                attendanceStatus = AttendanceStatus.LATE;
-            }
-        }
-
-
+        // Fetch the employee to get their shift
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        Shift shift = employee.getShift(); // Get the employee's shift
+
+        // Find the attendance policy for the employee's shift and the given session
+        AttendancePolicy policy = shift.getAttendancePolicies().stream()
+                .filter(p -> p.getSession().equals(session))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No attendance policy found for this session on the employee's shift"));
+
+        // Set attendance status based on the policy's "late after" time
+        AttendanceStatus attendanceStatus = AttendanceStatus.PRESENT;
+        if (LocalTime.now().isAfter(policy.getLateAfter())) {
+            attendanceStatus = AttendanceStatus.LATE;
+        }
+
+        // Generate day name
         LocalDate date = LocalDate.of(year, month, day); // Replace with your date
         String dayName = date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+
+        // Create and save the attendance record
         Attendance attendance = Attendance.builder()
                 .employee(employee)
                 .year(year)
@@ -119,6 +123,7 @@ public class AttendanceService {
 
         return attendanceRepository.save(attendance);
     }
+
 
     public Page<AttendanceResponse> findByEmployee(Long employeeId, LocalDate startDate, LocalDate endDate, Pageable pageable) {
         Page<Attendance> attendances;
@@ -158,6 +163,72 @@ public class AttendanceService {
                 .map(s -> new AllowedAttendanceSession(null, s, true))
                 .collect(Collectors.toList());
         allowedAttendanceSessionRepository.saveAll(newSessions);
+    }
+
+    public List<String> saveBulk(List<BulkAttendance> bulkAttendances) {
+        List<Attendance> attendances = new ArrayList<>();
+        Set<String> duplicateEmployeeNames = new HashSet<>(); // Set to hold unique names of employees who already submitted attendance
+
+        for (BulkAttendance ba : bulkAttendances) {
+            LocalDate date = LocalDate.of(ba.getYear(), ba.getMonth(), ba.getDay());
+            EmployeeAttendanceRequest employeeAttendanceRequest = new EmployeeAttendanceRequest();
+            employeeAttendanceRequest.setEmployeeId(ba.getEmployeeId());
+            employeeAttendanceRequest.setSession(ba.getSession());
+
+            AttendanceStatus at = AttendanceStatus.PRESENT;
+            Optional<Employee> employee = employeeRepository.findById(ba.getEmployeeId());
+
+            if (employee.isPresent()) {
+                if (employee.get().getStatus() == Status.DAY_OFF) {
+                    at = AttendanceStatus.DAY_OFF;
+                } else if (employee.get().getStatus() == Status.MATERNITY_LEAVE) {
+                    at = AttendanceStatus.MATERNITY_LEAVE;
+                } else if (employee.get().getStatus() == Status.PATERNITY_LEAVE) {
+                    at = AttendanceStatus.PATERNITY_LEAVE;
+                } else if (employee.get().getStatus() == Status.PAID_LEAVE) {
+                    at = AttendanceStatus.PAID_LEAVE;
+                } else if (employee.get().getStatus() == Status.UNPAID_LEAVE) {
+                    at = AttendanceStatus.UNPAID_LEAVE;
+                } else if (employee.get().getStatus() == Status.VACATION_LEAVE) {
+                    at = AttendanceStatus.VACATION_LEAVE;
+                } else {
+                    Optional<AttendancePolicy> s = attendancePolicyRepository.findBySession(ba.getSession());
+                    if (s.isPresent()) {
+                        LocalTime time = LocalTime.of(ba.getHour(), ba.getMinute(), ba.getSecond());
+                        if (time.isAfter(s.get().getLateAfter())) {
+                            at = AttendanceStatus.LATE;
+                        }
+                    }
+                }
+
+                Attendance attendance = Attendance.builder()
+                        .employee(employee.get())
+                        .year(date.getYear())
+                        .month(date.getMonthValue())
+                        .day(date.getDayOfMonth())
+                        .dayName(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH))
+                        .hour(ba.getHour())
+                        .minute(ba.getMinute())
+                        .second(ba.getSecond())
+                        .session(ba.getSession())
+                        .status(at)
+                        .build();
+
+                boolean alreadyFilled = attendanceRepository.existsByEmployeeIdAndYearAndMonthAndDayAndSession(
+                        ba.getEmployeeId(), ba.getYear(), ba.getMonth(), ba.getDay(), ba.getSession()
+                );
+
+                if (alreadyFilled) {
+                    duplicateEmployeeNames.add(employee.get().getFirstName() + " " + employee.get().getLastName());
+                } else {
+                    attendances.add(attendance);
+                }
+            }
+        }
+
+        attendanceRepository.saveAll(attendances);
+
+        return new ArrayList<>(duplicateEmployeeNames); // Return list of unique employee names who have already submitted attendance
     }
 
 }

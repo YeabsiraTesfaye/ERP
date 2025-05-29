@@ -1,11 +1,15 @@
 package com.yab.multitenantERP.controllers;
 
 import com.yab.multitenantERP.dtos.EmployeeFetchDTO;
+import com.yab.multitenantERP.dtos.ManagerAndSupervisorDTO;
 import com.yab.multitenantERP.dtos.PositionFetchDTO;
 import com.yab.multitenantERP.entity.Employee;
 import com.yab.multitenantERP.services.EmployeeService;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/employee")
@@ -20,11 +24,6 @@ class EmployeeController {
     public Employee createEmployee(@RequestBody Employee employee) {
         return employeeService.registerUser(employee);
     }
-
-//    @GetMapping
-//    public List<Employee> getAllEmployees() {
-//        return employeeService.getAllEmployees();
-//    }
 
     @GetMapping("/{id}")
     public EmployeeFetchDTO getEmployeeById(@PathVariable Long id) {
@@ -47,5 +46,31 @@ class EmployeeController {
             @RequestParam(value = "ascending", defaultValue = "true") boolean ascending) {
 
         return employeeService.getFilteredPaginatedEmployees(firstName, lastName, middleName, page, size, sortBy, ascending);
+    }
+
+    @PutMapping("/updateManagerSupervisor/{employeeId}")
+    public Employee updateManagerAndSupervisor(@PathVariable Long employeeId, @RequestBody ManagerAndSupervisorDTO managerAndSupervisorDTO){
+        return  employeeService.assignManagerAndSupervisor(employeeId, managerAndSupervisorDTO);
+    }
+
+    @GetMapping("/supervisor/{id}")
+    public List<Employee> getEmployeeBySupervisor(@RequestParam Long supervisorId){
+        return employeeService.getEmployeesBySupervisor(supervisorId);
+    }
+
+
+    @GetMapping("/manager/{id}")
+    public List<Employee> getEmployeeByManager(@RequestParam Long supervisorId){
+        return employeeService.getEmployeesByManager(supervisorId);
+    }
+
+    @GetMapping("/branch/{id}")
+    public List<Employee> getEmployeeByBranch(@RequestParam Long branchId){
+        return employeeService.getEmployeesByBranch(branchId);
+    }
+
+    @PostMapping("/levelAndDepartment/{departmentId}")
+    public List<Employee> getEmployeeByLevelAndDepartment(@PathVariable Long departmentId, @RequestBody Long level){
+        return employeeService.getEmployeesByDepartmentAndLevel(level, departmentId);
     }
 }

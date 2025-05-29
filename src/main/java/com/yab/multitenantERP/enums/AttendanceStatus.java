@@ -7,5 +7,8 @@ public enum AttendanceStatus {
     PAID_LEAVE,
     UNPAID_LEAVE,
     HOLIDAY,
-    DAY_OFF
+    DAY_OFF,
+    VACATION_LEAVE,
+    MATERNITY_LEAVE,
+    PATERNITY_LEAVE,
 }

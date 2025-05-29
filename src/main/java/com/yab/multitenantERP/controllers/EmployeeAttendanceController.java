@@ -1,6 +1,7 @@
 package com.yab.multitenantERP.controllers;
 
 import com.yab.multitenantERP.dtos.AttendanceResponse;
+import com.yab.multitenantERP.dtos.BulkAttendance;
 import com.yab.multitenantERP.dtos.EmployeeAttendanceRequest;
 import com.yab.multitenantERP.entity.Attendance;
 import com.yab.multitenantERP.services.AttendanceService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/attendance")
@@ -28,23 +30,27 @@ public class EmployeeAttendanceController {
     public ResponseEntity<Attendance> markAttendance(@RequestBody EmployeeAttendanceRequest request) {
         Attendance attendance = attendanceService.markAttendance(
                 request.getEmployeeId(),
-                request.getSession(),
-                request.getStatus()
+                request.getSession()
         );
         return ResponseEntity.ok(attendance);
     }
 
     @PostMapping("/bulk")
-    public ResponseEntity<?> submitMultipleAttendances(@RequestBody List<EmployeeAttendanceRequest> request) {
-        for (EmployeeAttendanceRequest ar : request) {
-            attendanceService.markAttendance(
-                    ar.getEmployeeId(),
-                    ar.getSession(),
-                    ar.getStatus()
-            ); // Or call your save logic directly
+    public ResponseEntity<?> submitMultipleAttendances(@RequestBody List<BulkAttendance> request) {
+        List<String> duplicates = attendanceService.saveBulk(request);
+
+        if (!duplicates.isEmpty()) {
+            return ResponseEntity.ok(Map.of(
+                    "message", "Some employees already submitted their attendance.",
+                    "duplicates", duplicates
+            ));
         }
-        return ResponseEntity.ok("Attendance submitted successfully.");
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Attendance submitted successfully."
+        ));
     }
+
 
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<Page<AttendanceResponse

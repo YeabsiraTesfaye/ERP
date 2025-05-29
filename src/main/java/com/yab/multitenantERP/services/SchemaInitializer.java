@@ -15,10 +15,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class SchemaInitializer {
@@ -127,5 +124,10 @@ public class SchemaInitializer {
 
     public List<Tenant> tenants(){
         return tenantRepository.findAll();
+    }
+
+    public Tenant getTenant(Long id) {
+        Optional<Tenant> tenant = tenantRepository.findById(id);
+        return tenant.get();
     }
 }

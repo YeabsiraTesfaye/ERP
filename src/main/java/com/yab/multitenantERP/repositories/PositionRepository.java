@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface PositionRepository extends JpaRepository<Position, Long> {
-    @EntityGraph(attributePaths = {"department"})
+    @EntityGraph(attributePaths = {"department","benefits"})
     List<Position> findByDepartmentId(@NonNull Long id);
 
 }

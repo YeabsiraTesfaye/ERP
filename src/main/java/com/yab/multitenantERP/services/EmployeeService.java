@@ -1,6 +1,7 @@
 package com.yab.multitenantERP.services;
 
 import com.yab.multitenantERP.dtos.EmployeeFetchDTO;
+import com.yab.multitenantERP.dtos.ManagerAndSupervisorDTO;
 import com.yab.multitenantERP.entity.*;
 import com.yab.multitenantERP.repositories.*;
 import jakarta.transaction.Transactional;
@@ -64,7 +65,7 @@ public Employee registerUser(Employee employee) {
             throw new RuntimeException("Department is full");
         }
 
-        if (requiredManPowerPosition != null && departmentEmployees.size() >= requiredManPowerPosition) {
+        if (requiredManPowerPosition != null && positionOpt.get().getEmployees().size() >= requiredManPowerPosition) {
             throw new RuntimeException("Position is full");
         }
     } else {
@@ -161,4 +162,69 @@ public Employee registerUser(Employee employee) {
     }
 
 
+    public Employee assignManager(Long employeeId, Long managerId) {
+        Optional<Employee> manager = employeeRepository.findById(managerId);
+        Optional<Employee> employee = employeeRepository.findById(employeeId);
+
+        if(employee.isPresent() && manager.isPresent()){
+            employee.get().setManager(manager.get());
+            return employeeRepository.save(employee.get());
+
+        }
+        return null;
+    }
+    public Employee assignSupervisor(Long employeeId, Long supervisorId) {
+        Optional<Employee> supervisor = employeeRepository.findById(supervisorId);
+        Optional<Employee> employee = employeeRepository.findById(employeeId);
+
+        if(employee.isPresent() && supervisor.isPresent()){
+            employee.get().setManager(supervisor.get());
+            return employeeRepository.save(employee.get());
+
+        }
+        return null;
+    }
+
+    public Employee assignManagerAndSupervisor(Long employeeId, ManagerAndSupervisorDTO managerAndSupervisorDTO) {
+
+        Optional<Employee> employee = employeeRepository.findById(employeeId);
+
+        if(employee.isPresent()){
+
+            if (managerAndSupervisorDTO.getSupervisorId() != null) {
+                if(managerAndSupervisorDTO.getSupervisorId() == -1){
+                    employee.get().setSupervisor(null);
+                }else{
+                    Optional<Employee> supervisor = employeeRepository.findById(managerAndSupervisorDTO.getSupervisorId());
+                    supervisor.ifPresent(value -> employee.get().setSupervisor(value));
+                }
+
+            }
+            if(managerAndSupervisorDTO.getManagerId() != null){
+                if(managerAndSupervisorDTO.getManagerId() == -1){
+                    employee.get().setManager(null);
+                }else{
+                    Optional<Employee> manager = employeeRepository.findById(managerAndSupervisorDTO.getManagerId());
+                    manager.ifPresent(value -> employee.get().setManager(value));
+                }
+            }
+            return employeeRepository.save(employee.get());
+
+        }
+        return null;
+    }
+
+    public List<Employee> getEmployeesBySupervisor(Long supervisorId){
+        return employeeRepository.findBySupervisor_id(supervisorId);
+    }
+    public List<Employee> getEmployeesByManager(Long managerId){
+        return employeeRepository.findByManager_id(managerId);
+    }
+    public List<Employee> getEmployeesByBranch(Long branchId){
+        return employeeRepository.findByBranch_id(branchId);
+    }
+
+    public List<Employee> getEmployeesByDepartmentAndLevel(Long level, Long departmentId){
+        return employeeRepository.findEmployeesByDepartmentAndLowerPositionLevel(departmentId, level);
+    }
 }

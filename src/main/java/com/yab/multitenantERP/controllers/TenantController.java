@@ -29,4 +29,10 @@ public class TenantController {
     public List<Tenant> getTenants(){
         return schemaInitializer.tenants();
     }
+
+
+    @GetMapping("/getTenant/{id}")
+    public Tenant getTenant(@PathVariable Long id){
+        return schemaInitializer.getTenant(id);
+    }
 }

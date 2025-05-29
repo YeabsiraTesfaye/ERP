@@ -1,5 +1,6 @@
 package com.yab.multitenantERP.dtos;
 
+import com.yab.multitenantERP.entity.Employee;
 import com.yab.multitenantERP.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,4 +19,5 @@ public class UserDTO {
     private String username;
     private Long tenant_id;
     private  Set<Role> roles;
+    private Long employeeId;
 }

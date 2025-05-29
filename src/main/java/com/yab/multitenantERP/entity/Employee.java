@@ -1,13 +1,11 @@
 package com.yab.multitenantERP.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yab.multitenantERP.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -86,11 +84,11 @@ public class Employee {
   private Employee manager;
 
   @ManyToOne
-  @JoinColumn(name = "report_to_id")
-  private Employee reportTo;
+  @JoinColumn(name = "supervisor_id")
+  private Employee supervisor;
 
   @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
-  private Address address;  // One-to-One relationship to Salary
+  private Address address;
 
   @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @OrderBy("id DESC")
@@ -108,4 +106,17 @@ public class Employee {
 
 
   private Status status;
+
+  @OneToOne
+  @JoinColumn(name = "user_id", referencedColumnName = "id")
+  private UserEntity user;
+
+  @ManyToOne
+  @JoinColumn(name = "shift_id")
+  private Shift shift;
+
+  @ManyToOne
+  @JoinColumn(name = "employee_group_id")
+  private EmployeeGroup employeeGroup;
+
 }

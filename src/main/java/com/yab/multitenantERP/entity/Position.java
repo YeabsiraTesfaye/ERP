@@ -40,15 +40,12 @@ public class Position {
             inverseJoinColumns = @JoinColumn(name = "benefit_id"))
     private List<Benefit> benefits;
 
-
-
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(name = "position_allowance",
-//            joinColumns = @JoinColumn(name = "position_id"),
-//            inverseJoinColumns = @JoinColumn(name = "allowance_id"))
-//    private List<Allowance> allowances;
-
-
     @OneToOne(mappedBy = "position", cascade = CascadeType.ALL)
     private Salary salary;
+
+    private Long level;
+
+    @ManyToOne
+    @JoinColumn(name = "shift_id")
+    private Shift shift;
 }

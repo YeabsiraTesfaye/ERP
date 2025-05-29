@@ -25,4 +25,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             Pageable pageable);
 
     List<Employee> findByStatusInAndDateOfHireLessThanEqual(List<Status> statuses, LocalDate hireDate);
+
+    List<Employee> findBySupervisor_id(Long supervisorId);
+    List<Employee> findByManager_id(Long supervisorId);
+    List<Employee> findByBranch_id(Long branchId);
+    List<Employee> findByShift_id(Long branchId);
+
+    @Query("SELECT e FROM Employee e " +
+            "WHERE e.position.level < :level " +
+            "AND e.position.department.id = :departmentId")
+    List<Employee> findEmployeesByDepartmentAndLowerPositionLevel(@Param("departmentId") Long departmentId,
+                                                                   @Param("level") Long level);
+
 }

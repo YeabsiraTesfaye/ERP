@@ -39,5 +39,12 @@ public enum Status {
     VACATION_LEAVE,
     MATERNITY_LEAVE,
     PATERNITY_LEAVE,
+    PRESENT,
+    ABSENT,
+    LATE,
+    PAID_LEAVE,
+    UNPAID_LEAVE,
+    HOLIDAY,
+    DAY_OFF
 
 }

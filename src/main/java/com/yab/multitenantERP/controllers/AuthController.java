@@ -5,8 +5,10 @@ import com.yab.multitenantERP.dtos.LoginRequest;
 import com.yab.multitenantERP.dtos.LoginResponse;
 import com.yab.multitenantERP.dtos.SignupRequest;
 import com.yab.multitenantERP.dtos.UserDTO;
+import com.yab.multitenantERP.entity.Employee;
 import com.yab.multitenantERP.entity.Role;
 import com.yab.multitenantERP.entity.UserEntity;
+import com.yab.multitenantERP.repositories.EmployeeRepository;
 import com.yab.multitenantERP.repositories.RoleRepository;
 import com.yab.multitenantERP.repositories.UserRepository;
 import com.yab.multitenantERP.services.UserService;
@@ -27,7 +29,10 @@ public class AuthController {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserService userService;
-    public AuthController(UserService userService, UserRepository userRepository, JwtUtil jwtUtil, RoleRepository roleRepository) {
+    public AuthController(UserService userService,
+                          UserRepository userRepository,
+                          JwtUtil jwtUtil,
+                          EmployeeRepository employeeRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.jwtUtil = jwtUtil;
@@ -61,6 +66,9 @@ public class AuthController {
 
         Set<Role> roles = userService.getUserRoles(request.getUsername());
         userDTO.setRoles(roles);
+        if(user.getEmployee() != null){
+            userDTO.setEmployeeId(user.getEmployee().getId());
+        }
 
         LoginResponse response = new LoginResponse(
                 token,

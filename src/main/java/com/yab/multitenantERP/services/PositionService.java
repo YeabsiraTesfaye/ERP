@@ -122,7 +122,6 @@ public class PositionService {
             }
 
         }
-
         position.setId(id);
         return positionRepository.save(position);
     }

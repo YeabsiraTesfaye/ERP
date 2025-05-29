@@ -1,5 +1,6 @@
 package com.yab.multitenantERP.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yab.multitenantERP.enums.AttendanceSession;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,4 +23,9 @@ public class AttendancePolicy {
     private AttendanceSession session;
 
     private LocalTime lateAfter;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "shift_id", nullable = false)
+    private Shift shift;  // Associate policy with a specific shift
 }
