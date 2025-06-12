@@ -90,9 +90,9 @@ public class Employee {
   @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
   private Address address;
 
-  @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-  @OrderBy("id DESC")
-  private List<Address> addressHistory;
+//  @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//  @OrderBy("id DESC")
+//  private List<Address> addressHistory;
 
   @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @OrderBy("id DESC")

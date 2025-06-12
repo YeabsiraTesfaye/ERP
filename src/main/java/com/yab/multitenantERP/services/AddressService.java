@@ -28,21 +28,35 @@ public class AddressService {
         this.addressHistoryRepository = addressHistoryRepository;
     }
 
-    public Address updateCurrentAddress( Address newAddress,Long employeeId) {
+    public Address updateCurrentAddress( Address address,Long employeeId) {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         if (employee.getAddress() != null) {
             Address oldAddress = employee.getAddress();
-            oldAddress.setEmployee(employee);
-            oldAddress.setIsPrimary(false);
-            employee.getAddressHistory().add(oldAddress);
+            AddressHistory addressHistory = new AddressHistory();
+            addressHistory.setAddressLine1(address.getAddressLine1());
+            addressHistory.setAddressLine2(address.getAddressLine2());
+            addressHistory.setCity(address.getCity());
+            addressHistory.setStateOrProvince(address.getStateOrProvince());
+            addressHistory.setPostalCode(address.getPostalCode());
+            addressHistory.setCountry(address.getCountry());
+            addressHistory.setAddressType(address.getAddressType());
+            addressHistory.setSubCity(address.getSubCity());
+            addressHistory.setWoreda(address.getWoreda());
+            addressHistory.setKebele(address.getKebele());
+            addressHistory.setEffectiveDate(address.getEffectiveDate());
+            addressHistory.setEmployee(employee);
+
+
+            addressHistoryRepository.save(addressHistory);
+            addressRepository.delete(oldAddress);
         }
 
         // Set new address as current
-        newAddress.setEmployee(employee);
-        employee.setAddress(newAddress);
-        return employeeRepository.save(employee).getAddress();
+        address.setEmployee(employee);
+        employee.setAddress(address);
+        return addressRepository.save(address);
     }
 
     public List<Address> getAllAddresses(){

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
-    private UserService userService;
+    private final UserService userService;
 
-    private RoleService roleService;
+    private final RoleService roleService;
 
     AdminController(UserService userService, RoleService roleService){
         this.userService = userService;

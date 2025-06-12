@@ -27,6 +27,7 @@ public class AddressController {
             Address newAddress = addressService.updateCurrentAddress(address, employeeId);
             return ResponseEntity.ok(newAddress);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
     }

@@ -20,6 +20,7 @@ public class EmployeeService {
     PositionAllowanceRepository positionAllowanceRepository;
     EmployeeBenefitRepository employeeBenefitRepository;
     PositionBenefitRepository positionBenefitRepository;
+    AddressHistoryRepository addressHistoryRepository;
 
 
     EmployeeService(EmployeeRepository employeeRepository,
@@ -30,7 +31,8 @@ public class EmployeeService {
     EmployeeBenefitRepository employeeBenefitRepository,
     PositionBenefitRepository positionBenefitRepository,
     PositionAllowanceRepository positionAllowanceRepository,
-                    DepartmentRepository departmentRepository){
+                    DepartmentRepository departmentRepository,
+                    AddressHistoryRepository addressHistoryRepository){
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
         this.branchRepository = branchRepository;
@@ -39,6 +41,7 @@ public class EmployeeService {
         this.positionAllowanceRepository = positionAllowanceRepository;
         this.employeeBenefitRepository = employeeBenefitRepository;
         this.positionBenefitRepository = positionBenefitRepository;
+        this.addressHistoryRepository = addressHistoryRepository;
 
     }
 @Transactional
@@ -86,7 +89,7 @@ public Employee registerUser(Employee employee) {
         List<PositionAllowance> positionAllowances = positionAllowanceRepository.findByPositionId(employee.getPosition().getId());
         List<EmployeeBenefit> employeeBenefits = employeeBenefitRepository.findByBenefitId(employee.getId());
         List<PositionBenefit> positionBenefits = positionBenefitRepository.findByPositionId(employee.getPosition().getId());
-
+        List<AddressHistory> addresses = addressHistoryRepository.findByEmployeeId(employee.getId());
         Map<String, EmployeeAllowance> allowanceMap = new HashMap<>();
 
         for (EmployeeAllowance ea : employeeAllowances) {
@@ -126,6 +129,7 @@ public Employee registerUser(Employee employee) {
         employeeFetchDTO.setEmployee(employee);
         employeeFetchDTO.setEmployeeAllowances(finalAllowances);
         employeeFetchDTO.setEmployeeBenefits(finalBenefits);
+        employeeFetchDTO.setAddressHistories(addresses);
         return employeeFetchDTO;
 
 

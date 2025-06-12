@@ -13,6 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 public interface AddressHistoryRepository extends JpaRepository<AddressHistory, Long> {
-    @Query("SELECT a FROM AddressHistory a WHERE a.employee.id = :employeeId")
+    @Query("SELECT a FROM AddressHistory a WHERE a.employee.id = :employeeId ORDER BY id DESC")
     List<AddressHistory> findByEmployeeId(@Param("employeeId") Long employeeId);
 }
