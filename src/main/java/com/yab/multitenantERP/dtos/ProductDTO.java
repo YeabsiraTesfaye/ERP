@@ -1,33 +1,26 @@
-package com.yab.multitenantERP.entity;
+package com.yab.multitenantERP.dtos;
 
+import com.yab.multitenantERP.entity.ChartOfAccount;
+import com.yab.multitenantERP.entity.UnitOfMeasure;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
-public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class ProductDTO {
     private String sku;
     private String name;
     private String description;
 
     @ManyToOne
-    private UnitOfMeasure uom;
+    private Long uom;
 
     private Double costPrice;
     private Double sellingPrice;
 
     @ManyToOne
-    private ChartOfAccount inventoryAccount;
+    private Long inventoryAccount;
 
     private Boolean isActive = true;
-
-    @Transient
-    private Double currentStock;
-
 }

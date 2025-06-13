@@ -40,6 +40,8 @@ dependencies {
 
 	// Spring Boot starter for validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 }
 
 tasks.named('test') {

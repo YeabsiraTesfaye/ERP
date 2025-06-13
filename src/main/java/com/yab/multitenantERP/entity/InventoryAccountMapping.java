@@ -1,8 +1,10 @@
 package com.yab.multitenantERP.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 public class InventoryAccountMapping {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
